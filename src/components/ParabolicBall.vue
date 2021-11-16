@@ -36,7 +36,7 @@ export default {
         },
         // Demo阶段（不完善），点击一下出现一组盒子，按照1.5秒间隔出现，完全版，应该是传入一个字符串数组按照不定的间隔依次出现
         playGame() {
-            let lettersArray = this.makeid(10);
+            let lettersArray = this.makeid(20);
             // lettersArray.forEach((letter) => {
             //     this.parabolicRun(letter)
             // })
@@ -58,6 +58,7 @@ export default {
             var num = Math.floor(Math.random() * (m - n + 1) + n)
             return num
         },
+        // 生成和盒子和抛物线动画
         parabolicRun(letter) {
             // 无残影
             // console.log(event.clientX,event.clientY)
