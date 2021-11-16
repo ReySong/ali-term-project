@@ -1,8 +1,5 @@
 <template>
     <div id="hahaha" @click="playGame()" >点击一下出现一组抛物线盒子</div>
-    <!-- <div style="top: 100px;width: 200px;height: 200px;">
-        <div class="five-pointed-star"></div>
-    </div>     -->
     <!-- <button @click="removeDiv">点击此处删除存在画面的第一个div</button> -->
 </template>
 
