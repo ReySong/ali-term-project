@@ -11,6 +11,10 @@ export default class Sounds {
     this.failureAudio = new Audio(
       soundsFileURI + "./sounds/failure.mp3?raw=true"
     );
+    this.doneAudio = new Audio(soundsFileURI + "./sounds/done.mp3?raw=true");
+    this.backgroundAudio = new Audio(
+      soundsFileURI + "./sounds/background.mp3?raw=true"
+    );
   }
 
   playSuccess() {
@@ -19,5 +23,13 @@ export default class Sounds {
 
   playFailure() {
     this.failureAudio.play();
+  }
+
+  playDone() {
+    this.doneAudio.play();
+  }
+
+  playBackgroundAudio() {
+    this.backgroundAudio.play();
   }
 }

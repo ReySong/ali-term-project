@@ -33,3 +33,5 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 todo
 
 https://sound.vueuse.org/ suspend resume + final result
+
+部分音乐素材来自：https://www.storyblocks.com/，用于学习研究目的，并非商用，侵权请联系项目组立刻删除，谢谢。
