@@ -38,7 +38,7 @@ export default {
             //     this.parabolicRun(letter)
             // })
             for (let i = 0; i < lettersArray.length; i++){
-                setTimeout(()=>this.parabolicRun(lettersArray[i]),i*1500)
+                setTimeout(()=>this.parabolicRun(lettersArray[i]),i*1000)
             }
             
         },
