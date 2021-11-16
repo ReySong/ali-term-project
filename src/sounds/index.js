@@ -8,7 +8,9 @@ export default class Sounds {
     this.successAudio = new Audio(
       soundsFileURI + "sounds/success.mp3?raw=true"
     );
-    this.failureAudio = new Audio(soundsFileURI + "./sounds/failure.mp3");
+    this.failureAudio = new Audio(
+      soundsFileURI + "./sounds/failure.mp3?raw=true"
+    );
   }
 
   playSuccess() {
