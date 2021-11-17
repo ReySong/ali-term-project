@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="">
   <head>
@@ -5,6 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    
+    <script src="https://unpkg.com/konva@4.0.18/konva.min.js"></script>
+    
     <title><%= htmlWebpackPlugin.options.title %></title>
   </head>
   <body>
@@ -12,6 +16,9 @@
       <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
     <div id="app"></div>
+
+    <div id="star"></div>
+    <script src="../src/star.js"></script>
     <!-- built files will be auto injected -->
   </body>
 </html>
