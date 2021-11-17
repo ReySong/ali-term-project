@@ -17,26 +17,44 @@ function draw() {
 }
 // 键盘按下事件
 function keyPressed() {
-  //按键按下时触发一次
-  for (let i = 0; i < buttons.length; i++) {
-    const element = buttons[i];
-    element.target(key);
+  //按键按下时触发一次，命中距离底部最近的按键
+  let targets = buttons.filter(button => button.key === key);
+  if (targets.length != 0) {
+    targets.sort((a, b) => b.position.y - a.position.y);
+    targets[0].target();
   }
 }
 // 用点击注册事件模拟按键产生过程
 function mousePressed() {
   const position = createVector(mouseX, mouseY);
   if (position.y > 0.8 * window.visualViewport.height) return;
-  const button = new Button('q', 0.8 * window.visualViewport.height, position);
+  const button = new Button('q', position);
   buttons.push(button);
 }
 // 模拟的按键类，设置了下落动画所需的树形
 class Button {
-  constructor(key, bottomBound, position, dir, size, color = 'red') {
+  constructor(
+    key,
+    position,
+    dir,
+    size,
+    color = 'red',
+    opcity = 1,
+    topBound = 0,
+    rightBound = window.visualViewport.width,
+    bottomBound = window.visualViewport.height,
+    leftBound = 0
+  ) {
     // 按键是啥
     this.key = key;
-    // 下线
+    // 上边界线
+    this.topBound = topBound;
+    // 右边界线
+    this.rightBound = rightBound;
+    // 下边界边线
     this.bottomBound = bottomBound;
+    // 左边界边线
+    this.leftBound = leftBound;
     // 中心位置向量——createVector返回坐标向量
     this.position = position ? createVector(position.x, position.y) : createVector(random(width), random(height));
     // 掉落方位向量
@@ -45,6 +63,8 @@ class Button {
     this.size = size || 30;
     // 颜色
     this.color = color;
+    // 透明度
+    this.opcity = opcity;
     // 加速度向量
     this.acc = createVector(0, 0);
   }
@@ -63,29 +83,55 @@ class Button {
   }
   // 绘制按键
   drop() {
-    noStroke();
-    fill(this.color);
-    rect(this.position.x, this.position.y, this.size * 2);
-    textSize(48);
-    fill('white');
-    text(this.key, this.position.x + this.size / 2, this.position.y + this.size * 1.2);
+    if (this.opcity < 1) {
+      if (this.opcity <= 0.1) {
+        buttons = buttons.filter(button => button !== this);
+      } else {
+        noStroke();
+        fill(`rgba(${this.color.levels[0]},${this.color.levels[1]},${this.color.levels[2]},${(this.opcity -= 0.05)})`);
+        rect(this.position.x - this.size, this.position.y - this.size, this.size * 2);
+      }
+    } else if (this.opcity == 1) {
+      noStroke();
+      fill(this.color);
+      rect(this.position.x - this.size, this.position.y - this.size, this.size * 2);
+      textSize(48);
+      fill('white');
+      text(this.key, this.position.x - this.size / 2, this.position.y + this.size * 0.2);
+    } else return;
   }
   // 触边消失
   edge() {
-    if (this.position.y + this.size > this.bottomBound) {
-      buttons = buttons.filter(p => p !== this);
+    if (
+      this.position.y + this.size > this.bottomBound ||
+      this.position.y - this.size < this.topBound ||
+      this.position.x + this.size > this.rightBound ||
+      this.position.x - this.size < this.leftBound
+    ) {
+      buttons = buttons.filter(button => button !== this);
     }
   }
   // 按键命中消失
-  target(key) {
-    console.log(key);
-    if (this.key == key) {
-      // 应确保一次只消失一个
-      this.bingo();
+  target() {
+    let size = this.size;
+    let position = this.position;
+    let dir = this.dir;
+    buttons = buttons.filter(button => button !== this);
+    for (let i = 0; i < 15; i++) {
+      const button = new Button(
+        '',
+        position,
+        dir,
+        size / 2,
+        color(random(255), random(255), random(255)),
+        0.8,
+        position.y - size * 5,
+        position.x + size * 5,
+        position.y + size * 5,
+        position.x - size * 5
+      );
+      button.acc.add(createVector(random(-20, 20), random(-20, 20)));
+      buttons.push(button);
     }
-  }
-  // 退场动画
-  bingo() {
-    buttons = buttons.filter(p => p !== this);
   }
 }
