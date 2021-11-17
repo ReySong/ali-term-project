@@ -34,10 +34,11 @@ export default {
     ctx.font = "20px Tahoma";
     ctx.textAlign = "center";
 
-    FadeIn(ctx, this.$data.elems[0], 0);
+    let r = FadeIn(ctx, this.$data.elems[0], 0);
 
     document.addEventListener('keyup', (event) => {
       if (event.keyCode === this.$data.elems[0].keycode) {
+        cancelAnimationFrame(r);
         FadeOut(ctx, this.$data.elems[0], 1);
       }
     })

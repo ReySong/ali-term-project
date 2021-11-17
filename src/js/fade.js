@@ -1,7 +1,7 @@
 import { KeyCodeMapTable } from "./keycodeTable";
 
 function FadeIn(ctx, elem, op) {
-    op += 0.001;
+    op += 0.1;
     let keyValue = KeyCodeMapTable[elem.keycode];
     ctx.globalAlpha = op;
     ctx.fillStyle = elem.color;
@@ -13,12 +13,11 @@ function FadeIn(ctx, elem, op) {
         FadeIn(ctx, elem, op);
     })
 
-    if (op >= 1) cancelAnimationFrame(r);
-
+    return r;
 }
 
 function FadeOut(ctx, elem, op) {
-    op -= 0.001;
+    op -= 0.1;
     let keyValue = KeyCodeMapTable[elem.keycode];
     ctx.clearRect(elem.x, elem.y, elem.width, elem.height);
     ctx.globalAlpha = op;
@@ -27,11 +26,10 @@ function FadeOut(ctx, elem, op) {
     ctx.fillStyle = elem.textColor;
     ctx.strokeText(keyValue, elem.x + elem.width / 2, elem.y + elem.height / 1.8);
 
-    let r = requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
         FadeOut(ctx, elem, op);
     })
 
-    if (op <= 0) cancelAnimationFrame(r);
 
 }
 
