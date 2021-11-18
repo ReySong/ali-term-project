@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      #canvas {
+        position: fixed;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas">您的浏览器不支持canvas</canvas>
+    <script type="module">
+      import { GameController, util, Button, buttons } from './lib/index.js';
+      const canvas = document.querySelector('#canvas');
+      const ctx = canvas.getContext('2d');
+      // 定义游戏相关的配置项
+      const option = {
+        // 绘图函数
+        draw() {
+          util.background(canvas, ctx, 'rgba(51,51,51,0.5)');
+          buttons.forEach(button => {
+            button.drop(ctx);
+            button.update();
+          });
+        },
+        // 监听事件
+        events: {
+          // 键盘按下事件
+          keyPressed(key) {
+            //按键按下时触发一次，命中距离底部最近的按键
+            let targets = buttons.filter(button => button.key === key);
+            if (targets.length != 0) {
+              targets.sort((a, b) => b.position.y - a.position.y);
+              targets[0].target();
+            }
+          },
+          // 用点击注册事件模拟按键产生过程
+          mousePressed(mouseX, mouseY) {
+            const position = util.createVector(mouseX, mouseY);
+            if (position.y > 0.8 * window.innerHeight) return;
+            const button = new Button('q', position);
+            buttons.push(button);
+          },
+        },
+      };
+      // 初始化游戏控制器
+      let gameController = new GameController(canvas, ctx, option);
+      // 游戏装载
+      gameController.setup();
+    </script>
+  </body>
+</html>
