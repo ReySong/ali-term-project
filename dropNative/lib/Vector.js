@@ -16,9 +16,10 @@ class Vector {
       this.x += x[0] || 0;
       this.y += x[1] || 0;
       return this;
+    } else {
+      this.x += x || 0;
+      this.y += y || 0;
     }
-    this.x += x || 0;
-    this.y += y || 0;
     return this;
   }
   mult(num) {

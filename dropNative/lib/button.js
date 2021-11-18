@@ -97,7 +97,7 @@ class Button {
     let position = this.position;
     let dir = this.dir;
     buttons = buttons.filter(button => button !== this);
-    for (let i = 0; i < 15; i++) {
+    for (let i = 0; i < 29; i++) {
       const button = new Button(
         '',
         position,
@@ -110,7 +110,8 @@ class Button {
         position.y + size * 5,
         position.x - size * 5
       );
-      button.acc.add(util.createVector(util.random(-20, 20), util.random(-20, 20)));
+      //   i < 10
+      button.acc.add(util.createVector(util.random(-20, 10), util.random(-20, 10)));
       buttons.push(button);
     }
   }
