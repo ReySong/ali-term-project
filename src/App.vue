@@ -1,5 +1,5 @@
 <template>
-  <div id="root"></div>
+  <div id="root" />
   <!-- <canvas ref="canvas" class="canvas" width="1000" height="1000"></canvas> -->
   <button class="btn btn-drop"> 坠落 </button>
   <button class="btn btn-parabola"> 抛物 </button>
@@ -10,8 +10,8 @@
 <script>
 
 import { FadeIn, FadeOut } from './scripts/fade';
-import  GenerateRamdonLocElems from './scripts/generate';
-// import { setup, Game } from './scripts/game';
+import { KeyCode } from './scripts/keycode.js'
+// import GenerateRandomLocElems from './scripts/generate';
 
 export default {
   name: 'App',
@@ -24,24 +24,57 @@ export default {
     const root = document.getElementById("root");
     let timer;
     let elem;
-    let animation;
-    let idCount = 0;
+    // let animation;
+    // let idCount = 0;
 
+    let dropBtn = document.getElementsByClassName("btn-drop")[0];
+    let parabolaBtn = document.getElementsByClassName("btn-parabola")[0];
     let fadeBtn = document.getElementsByClassName("btn-fade")[0];
+
+    dropBtn.addEventListener("click", () => {
+
+    });
+
+    parabolaBtn.addEventListener("click", () => {
+
+    });
+
     fadeBtn.addEventListener("click", () => {
-      elem = GenerateRamdonLocElems();
-      let id = FadeIn(root, elem, idCount++);
-      timer = setTimeout(() => {
-        cancelAnimationFrame(animation);
-        FadeOut(id);
-      }, 3000)
-      document.addEventListener('keyup', () => {
+      if (elem !== undefined) return;
+      elem = {
+        top: 40,
+        left: undefined,
+        right: 20,
+        width: 160,
+        height: 80,
+        keycode: KeyCode[Math.floor(Math.random() * KeyCode.length)]
+      }
+      let id = FadeIn(root, elem, -1);
+      const dom = document.getElementById(id);
+      dom.addEventListener('keyup', (event) => {
+        console.log(event.keyCode, elem.keycode);
         if (event.keyCode === elem.keycode) {
           clearInterval(timer);
-          FadeOut(id);
+          FadeOut(event.target);
         }
       })
-    })
+    });
+    // fadeBtn.addEventListener("click", () => {
+    //   elem = GenerateRandomLocElems();
+    //   let id = FadeIn(root, elem, idCount++);
+    //   timer = setTimeout(() => {
+    //     cancelAnimationFrame(animation);
+    //     FadeOut(document.getElementById(id));
+    //   }, 3000)
+      // const dom = document.getElementById(id);
+      // dom.addEventListener('keyup', (event) => {
+      //   console.log(event.keyCode, elem.keycode);
+      //   if (event.keyCode === elem.keycode) {
+      //     clearInterval(timer);
+      //     FadeOut(event.target);
+      //   }
+      // })
+    // })
 
     
   }
@@ -55,7 +88,7 @@ export default {
   right: 0;
   left: 0;
   bottom: 0;
-  z-index: 9;
+  z-index: 0;
 }
 
 .btn {

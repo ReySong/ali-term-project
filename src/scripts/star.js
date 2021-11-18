@@ -1,7 +1,4 @@
 /* eslint-disable no-undef */
-
-
-
 var stage = new Konva.Stage({
   container: 'star',
   width: window.innerWidth,
