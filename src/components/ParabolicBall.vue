@@ -1,11 +1,11 @@
 <template>
-    <div id="hahaha" @click="playGame()" >点击一下出现一组抛物线盒子</div>
+    <div id="parabolic-ball-container" @click="playGame()" > 抛物 </div>
     <!-- <button @click="removeDiv">点击此处删除存在画面的第一个div</button> -->
 </template>
 
 <script>
-
 import {nanoid} from 'nanoid'
+
 export default {
     name: 'ParabolicBall',
     data(){
@@ -171,7 +171,7 @@ body {
    margin:0;
    /* background-color:black; */
 }
-#hahaha {
+/* #parabolic-ball-container {
     position: absolute;
     padding: 5px;
     transform: translate(-50%, -50%);
@@ -180,7 +180,7 @@ body {
     font-size: 20px;
     color: #6D6D6D;
     user-select: none;
-}
+}*/
 .myAnimation {
     position: fixed;
     width: 60px;
