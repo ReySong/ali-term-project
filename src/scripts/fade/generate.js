@@ -1,4 +1,4 @@
-import { KeyCode } from "./keycode";
+import { KeyCode } from "../keycode";
 
 function GenerateRandomLocElems() {
     /**

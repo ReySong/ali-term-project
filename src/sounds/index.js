@@ -15,7 +15,6 @@ export default class Sounds {
     this.backgroundAudio = new Audio(
         "./sounds/background.mp3?raw=true"
     );
-    this.backgroundAudio.muted = "muted";
   }
 
   playSuccess() {
