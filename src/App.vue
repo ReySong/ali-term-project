@@ -1,22 +1,25 @@
 <template>
-  <div id="root"></div>
+  <div id="root">
+    <ParabolicBall></ParabolicBall>
+  </div>
   <!-- <canvas ref="canvas" class="canvas" width="1000" height="1000"></canvas> -->
-  <button class="btn btn-drop"> 坠落 </button>
+  <!-- <button class="btn btn-drop"> 坠落 </button>
   <button class="btn btn-parabola"> 抛物 </button>
   <button class="btn btn-fade"> 淡入 </button>
-  <button class="btn btn-start"> 开始游戏！ </button>
+  <button class="btn btn-start"> 开始游戏！ </button> -->
 </template>
 
 <script>
 
-import { FadeIn, FadeOut } from './scripts/fade';
-import  GenerateRamdonLocElems from './scripts/generate';
+// import { FadeIn, FadeOut } from './scripts/fade';
+// import  GenerateRamdonLocElems from './scripts/generate';
+import ParabolicBall from './components/ParabolicBall.vue'
 // import { setup, Game } from './scripts/game';
 
 export default {
   name: 'App',
-  components: {},
-  mounted() {
+  components: {ParabolicBall},
+  /* mounted() {
     // const canvas = this.$refs.canvas;
     // const ctx = canvas.getContext("2d");
     // ctx.font = "20px Arial";
@@ -44,8 +47,8 @@ export default {
     })
 
     
-  }
-}
+  }*/
+} 
 </script>
 
 <style>

@@ -1,9 +1,15 @@
 <template>
     <div id="hahaha" @click="playGame()" >点击一下出现一组抛物线盒子</div>
     <!-- <button @click="removeDiv">点击此处删除存在画面的第一个div</button> -->
+    <h1>得分{{yourScore}}</h1>
 </template>
 
+
 <script>
+
+import TimelineLite from '../../public/assets/js/TweenMax.min';
+import TweenLite from '../../public/assets/js/TweenMax.min'
+import {Sounds} from '../../public/assets/sounds/index'
 
 import {nanoid} from 'nanoid'
 export default {
@@ -13,11 +19,16 @@ export default {
             // 抛出的盒子样式
             elementArray:['ghost','square'],
             // 抛出盒子的颜色设置
-            colorArray:['#2A7E98','#f5a63','#D91649','#33D1A0','#31027D'],
+            colorArray:['#2A7E98','#f5a63','#D91649','#33D1A0','#31027D','#16A086','#B2A4E1','#FB6157'],
             // 存放生成的div盒子的id和显示的键值，盒子消失，就把id从idArray里去除
             idArray:[],
             // 记录得分
             yourScore: 0,
+            // 记录已经消失的div，方便暂停背景音乐，播放结束音乐
+            divCount:0, 
+            // 生成多少个字符，控制游戏难度
+            letterLength:20,
+            sound:new Sounds()
         }
     },
     methods:{
@@ -33,14 +44,14 @@ export default {
         },
         // Demo阶段（不完善），点击一下出现一组盒子，按照1.5秒间隔出现，完全版，应该是传入一个字符串数组按照不定的间隔依次出现
         playGame() {
-            let lettersArray = this.makeid(20);
-            // lettersArray.forEach((letter) => {
-            //     this.parabolicRun(letter)
-            // })
+            let lettersArray = this.makeid(this.letterLength);
+            this.yourScore = 0;
+            this.sound.playBackgroundAudio()
             for (let i = 0; i < lettersArray.length; i++){
-                setTimeout(()=>this.parabolicRun(lettersArray[i]),i*1000)
+                setTimeout(()=>{
+                    this.parabolicRun(lettersArray[i])
+                },i*1000)
             }
-            
         },
 
         removeDiv() {
@@ -60,7 +71,7 @@ export default {
             // 无残影
             // console.log(event.clientX,event.clientY)
             // this.addAnimation({x: event.clientX, y:event.clientY},'', '', 500);
-            this.addAnimation(letter,{x: this.getRandom(50,500), y: this.getRandom(350,450)},'', '', 500);
+            this.addAnimation(letter,{x: this.getRandom(50,500), y: this.getRandom(400,500)},'', '', 500);
             // 有残影
             // this.ghost({x: event.clientX, y:event.clientY}, '', '', 500);
         },
@@ -74,9 +85,6 @@ export default {
         let item = document.createElement('div');
         !ghost ? item.className = this.elementArray[Math.floor(Math.random() * this.elementArray.length)] : item.className = 'ghost';
         item.style.backgroundColor = this.colorArray[Math.floor(Math.random() * this.colorArray.length)];
-        // if(item.className !== 'five-pointed-star') { 
-        //     item.style.backgroundColor = this.colorArray[Math.floor(Math.random() * this.colorArray.length)];
-        // }
         item.id = nanoid();
         // console.log(item.id);
         item.style.top = startPosition.y + 'px';
@@ -87,7 +95,7 @@ export default {
         // console.log(this.idArray);
 
         // 目的地
-        const targetTop = endPosition.y || document.body.offsetHeight ;
+        const targetTop =  document.body.offsetHeight ;
         const targetLeft = this.getRandom(800,document.body.offsetWidth) ;
         // console.log(targetTop, targetLeft)
 
@@ -118,10 +126,22 @@ export default {
             // 判断是否要停止
             if (nowY >= targetTop) {
                 // 停止 隐藏 销毁 退出
+                let preLength = this.idArray.length
                 this.idArray = this.idArray.filter((idArray)=>{
                     return idArray.id !== item.id;
                 })
-                item.remove();
+                if (preLength > this.idArray.length) {
+                    item.remove();
+                    this.yourScore -= 2;
+                    this.sound.playFailure()
+                    this.divCount ++
+                    // console.log(this.divCount)
+                    if (this.divCount === this.letterLength){
+                    this.sound.pauseBackgroundAudio()
+                    this.sound.playDone()
+                    this.divCount = 0
+                    }
+                }
                 // console.log(this.idArray)
                 return;
             }
@@ -141,24 +161,104 @@ export default {
         };
         move();
             
+        },
+        explodeInit(explodeDivId,color) {
+            let	container = document.createElement("div"),
+                explodeDivSize = 100,
+                dotQuantity = 50,
+                dotSizeMax = 50,
+                dotSizeMin = 10;
+            
+            container.setAttribute("id", "emit-wrap");
+            //setup the container with the appropriate styles
+            container.style.cssText = "position:fixed; overflow:visible; z-index:5000; pointer-events:none";
+            document.body.appendChild(container);
+            explode(explodeDivId,color);
+            
+            function createExplosion(container) {
+                let tl = new TimelineLite({
+                    onComplete: function() {
+                        container.remove();
+                    }
+                });
+                let	angle, length, dot, i, size;
+                //create all the dots
+                for (i = 0; i < dotQuantity; i++) {
+                    dot = document.createElement("div");
+                    dot.className = "explodeDiv-dot";
+                    dot.style.backgroundColor = color;
+                    size = getRandom(dotSizeMin, dotSizeMax);
+                    container.appendChild(dot);
+                    angle = Math.random() * Math.PI * 2; //random angle
+                    //figure out the maximum distance from the center, factoring in the size of the dot (it must never go outside the circle), and then pick a random spot along that length where we'll plot the point. 
+                    length = Math.random() * (explodeDivSize / 2 - size / 2);
+                    //place the dot at a random spot within the explodeDiv, and set its size.
+                    TweenLite.set(dot, {
+                        x: Math.cos(angle) * length,
+                        y: Math.sin(angle) * length,
+                        width: size,
+                        height: size,
+                        xPercent: -50,
+                        yPercent: -50,
+                        force3D: true
+                    });
+                    //this is where we do the animation...
+                    TweenLite.to(dot, 1 + Math.random(), {
+                        opacity: 0,
+
+                        //if you'd rather not do physics, you could just animate out directly by using the following 2 lines instead of the physics2D:
+                        x: Math.cos(angle) * length * 24,
+                        y: Math.sin(angle) * length * 24
+                    }, 0);
+                }
+                return tl;
+            }
+            
+            function explode(explodeDivId) {
+                createExplosion(container);
+        
+                let offsetLeft = document.getElementById(explodeDivId).offsetLeft;
+                let offsetTop = document.getElementById(explodeDivId).offsetTop;
+                let width = document.getElementById(explodeDivId).offsetWidth;
+                let height =document.getElementById(explodeDivId).offsetHeight;
+
+                TweenLite.set(container, {
+                    x: offsetLeft + width / 2,
+                    y: offsetTop + height / 2
+                });
+            }
+
+            function getRandom(min, max) {
+                return min + Math.random() * (max - min);
+            }
         }
     },
     mounted() {
         // 按下按键消除画面存在的第一个符合条件的div盒子
         document.addEventListener('keyup',(e)=>{
             let pressKey = e.key.toUpperCase();
-            console.log(pressKey);
+            // console.log(pressKey);
             // 删除第一个符合键值的盒子
             for (let i = 0; i < this.idArray.length; i++) {
-                console.log(this.idArray.length)
+                // console.log(this.idArray.length)
                 if (this.idArray[i].keyValue === pressKey) {
                     if(!this.idArray.length) return;
                     let removeDivId = this.idArray[i].id
                     let removeDiv = document.getElementById(removeDivId);
+                    let color = this.colorArray[Math.floor(Math.random() * this.colorArray.length)];
+                    this.explodeInit(removeDivId,color)
                     removeDiv.remove();
+                    this.yourScore += 3;
                     this.idArray.splice(i,1)
-                    console.log(this.idArray);
-                    break;
+                    this.divCount ++;
+                    this.sound.playSuccess()
+                    if (this.divCount === this.letterLength){
+                        this.sound.pauseBackgroundAudio()
+                        this.sound.playDone()
+                        this.divCount = 0
+                    }
+                    // console.log(this.idArray)
+                    break
                 }
             }
         })
@@ -168,7 +268,9 @@ export default {
 
 <style>
 body {
-   margin:0;
+    width: 100%;
+    height:100%;
+    margin:0;
    /* background-color:black; */
 }
 #hahaha {
@@ -264,5 +366,10 @@ content: "";
     -webkit-text-fill-color: transparent;
 }
 
+.explodeDiv-dot {
+  background-color: #33D1A0;
+  border-radius: 999px;
+  position: absolute;
+}
 
 </style>
