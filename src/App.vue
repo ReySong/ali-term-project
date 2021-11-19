@@ -16,7 +16,7 @@
     <span>e</span>
   </h1>
   <div id="root" />
-  <div id="counter">{{ score }}</div>
+  <div id="counter" class="btn btn-score">得分: {{ score }}</div>
   <parabolic-ball class="btn btn-parabola" :sound="sound" />
   <fade-button class="btn btn-fade" :sound="sound" />
   <drop-button class="btn btn-drop" :sound="sound"></drop-button>
@@ -51,6 +51,7 @@ export default defineComponent({
       const fadeBtn = document.getElementsByClassName("btn-fade")[0];
       const startBtn = document.getElementsByClassName("btn-start")[0];
       const title = document.querySelector(".load");
+      const counter = document.querySelector("#counter");
       let id = "1";
       let idList = new Map();
       startBtn.addEventListener("click", () => {
@@ -58,6 +59,8 @@ export default defineComponent({
         parabolaBtn.style.display = "none";
         fadeBtn.style.display = "none";
         title.style.display = "none";
+        counter.style.display = "block";
+        score.value = 0;
         let si = setInterval(() => {
           let effect = Math.floor(Math.random() * 3);
           let randomElem = GenerateRandomLocElems();
@@ -80,7 +83,7 @@ export default defineComponent({
               });
               break;
             case 2:
-              FadeIn(randomElem, id++);
+              FadeIn(randomElem, id++, sound, idList);
               document.addEventListener("keyup", (event) => {
                 let idExist = idList.get(event.keyCode);
                 if (idExist) {
@@ -297,7 +300,18 @@ h1.load {
   right: 20%;
   bottom: 30%;
 }
-
+.btn-score {
+  position: fixed;
+  right: 49%;
+  top: 5%;
+  display: none;
+  /* position: fixed;
+  left: 65%;
+  bottom: 10%; */
+}
+.show {
+  display: block;
+}
 @keyframes shake-slow {
   0% {
     transform: translate(0px, 0px) rotate(0deg);

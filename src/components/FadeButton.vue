@@ -4,15 +4,14 @@
 
 <script>
 import { FadeIn, FadeOut } from "../scripts/fade/fade";
-import { Sounds } from "../sounds/index";
 import { KeyCode } from "../scripts/keycode";
+import { defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   name: "FadeButton",
+  props: ["sound"],
   mounted() {
-    let sound = new Sounds();
     let elem;
-    sound.playBackgroundAudio();
     const fadeBtn = document.getElementsByClassName("btn-fade")[0];
     fadeBtn.addEventListener("click", () => {
       /**
@@ -35,5 +34,5 @@ export default {
       });
     });
   },
-};
+});
 </script>
