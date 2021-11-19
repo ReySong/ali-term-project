@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="">
   <head>
@@ -8,7 +9,8 @@
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     
     <script src="https://unpkg.com/konva@4.0.18/konva.min.js"></script>
-    
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5.2.2/dist/echarts.min.js"></script>
+
     <title><%= htmlWebpackPlugin.options.title %></title>
   </head>
   <body>
@@ -16,6 +18,9 @@
       <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
     <div id="app"></div>
+    
+    <div id="container" style=" height: 300px;" ></div>
+    <script type="text/javascript" src="../src/Scorer.js"></script>
 
     <div id="star"></div>
     <script src="../src/star.js"></script>

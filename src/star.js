@@ -5,7 +5,7 @@
 var stage = new Konva.Stage({
   container: 'star',
   width: window.innerWidth,
-  height: window.innerHeight
+  height: window.innerHeight - 300
 });
 
 var layer = new Konva.Layer();
