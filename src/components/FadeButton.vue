@@ -4,14 +4,14 @@
 
 <script>
 import { FadeIn, FadeOut } from "../scripts/fade/fade";
-import { Sounds } from "../sounds/index";
+// import { Sounds } from "../sounds/index";
 import GenerateRandomLocElems from "../scripts/fade/generate";
 
 export default {
   name: "FadeButton",
   mounted() {
-    let sound = new Sounds();
-    sound.playBackgroundAudio();
+    // let sound = new Sounds();
+    // sound.playBackgroundAudio();
     const fadeBtn = document.getElementsByClassName("btn-fade")[0];
     let id = "1";
     let idList = new Map();
@@ -30,7 +30,7 @@ export default {
           let idExist = idList.get(event.keyCode);
           if (idExist) {
             idList.delete(idExist);
-            sound.playSuccess();
+            // sound.playSuccess();
             FadeOut(idExist, 1);
           }
         });

@@ -1,11 +1,12 @@
 <template>
-  <div>得分{{score}}</div>
+  <div></div>
 </template>
 
 <script>
+import { $bus } from "../scripts/eventBus/bus";
 import { DropIn, DropOut } from "../scripts/drop/drop";
 import GenerateRandomLocElems from "../scripts/fade/generate";
-import { defineComponent, onMounted, ref } from "vue";
+import { defineComponent, ref } from "vue";
 export default defineComponent({
   name: "DropButton",
   props: ["sound"],
@@ -13,11 +14,25 @@ export default defineComponent({
     const score = ref(0);
     let id = "1";
     let idList = new Map();
-    onMounted(() => {
-      const dropBtn = document.getElementsByClassName("btn-drop")[0];
-      let i = 0;
-      dropBtn.addEventListener("click", () => {
-        let si = setInterval(() => {
+    let si = setInterval(() => {
+      let randomElem = GenerateRandomLocElems();
+      idList.set(randomElem.keycode, id);
+      DropIn(randomElem, id++, props.sound, idList);
+      document.addEventListener("keyup", (e) => {
+        if (idList.size === 0) return;
+        let idExist = idList.get(e.keyCode);
+        if (idExist) {
+          idList.delete(e.keyCode);
+          props.sound.playSuccess();
+          score.value++;
+          DropOut(idExist);
+        }
+        e.preventDefault();
+      });
+    }, 4000);
+    document.onvisibilitychange = function () {
+      if (document.visibilityState == "visible") {
+        si = setInterval(() => {
           let randomElem = GenerateRandomLocElems();
           idList.set(randomElem.keycode, id);
           DropIn(randomElem, id++, props.sound, idList);
@@ -25,23 +40,23 @@ export default defineComponent({
             if (idList.size === 0) return;
             let idExist = idList.get(e.keyCode);
             if (idExist) {
-              console.log(++i);
               idList.delete(e.keyCode);
-              console.log(idList);
               props.sound.playSuccess();
               score.value++;
               DropOut(idExist);
             }
-            event.preventDefault();
+            e.preventDefault();
           });
-        }, 2000);
-        let flag = false;
-        /* 音乐播放完 */
-        if (flag) {
-          clearInterval(si);
-        }
-      });
+        }, 4000);
+      } else {
+        console.log("can");
+        clearInterval(si);
+      }
+    };
+    $bus.on("bgDone", () => {
+      clearInterval(si);
     });
+
     return { score };
   },
 });

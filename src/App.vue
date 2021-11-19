@@ -1,4 +1,20 @@
 <template>
+  <h1 class="load">
+    <span>K</span>
+    <span>e</span>
+    <span>y</span>
+    <span>p</span>
+    <span>r</span>
+    <span>e</span>
+    <span>s</span>
+    <span>s</span>
+    <span>&nbsp;</span>
+    <span>D</span>
+    <span>a</span>
+    <span>n</span>
+    <span>c</span>
+    <span>e</span>
+  </h1>
   <div id="root" />
   <button class="btn btn-drop">坠落</button>
   <parabolic-ball class="btn btn-parabola" :sound="sound" />
@@ -35,7 +51,7 @@ export default {
     const parabolaBtn = document.getElementsByClassName("btn-parabola")[0];
     const fadeBtn = document.getElementsByClassName("btn-fade")[0];
     const startBtn = document.getElementsByClassName("btn-start")[0];
-
+    const title = document.querySelector(".title");
     dropBtn.addEventListener("click", () => {});
 
     parabolaBtn.addEventListener("click", () => {});
@@ -67,6 +83,7 @@ export default {
       dropBtn.style.display = "none";
       parabolaBtn.style.display = "none";
       fadeBtn.style.display = "none";
+      title.style.display = "none";
       let si = setInterval(() => {
         // let effect = Math.floor(Math.random() * 3)
         let randomElem = GenerateRandomLocElems();
@@ -101,15 +118,77 @@ export default {
 </script>
 
 <style>
-.canvas {
-  position: fixed;
-  top: 0;
-  right: 0;
-  left: 0;
-  bottom: 0;
-  z-index: 0;
+.title {
+  color: #fafafa;
+  letter-spacing: 0;
+  text-shadow: 0px 1px 0px #999, 0px 2px 0px #888, 0px 3px 0px #777,
+    0px 4px 0px #666, 0px 5px 0px #555, 0px 6px 0px #444, 0px 7px 0px #333,
+    0px 8px 7px #001135;
+  font-size: 100px;
+  line-height: 100px;
+}
+h1.load {
+  font-family: "Nunito", sans-serif;
+  text-align: center;
+  text-transform: uppercase;
+  margin-top: 60px;
+  font-size: 80px;
+  line-height: 100px;
+  color: transparent;
+  letter-spacing: 5px;
+}
+.load span {
+  text-shadow: 0 0 2px rgba(181, 185, 189, 0.822),
+    0 15px 25px rgba(0, 0, 0, 0.3), 0 -2px 3px rgba(0, 0, 0, 0.1),
+    0 -5px 10px rgba(255, 255, 255, 0.5), 0 5px 10px rgba(0, 0, 0, 0.3),
+    0 3px 4px rgba(255, 255, 255, 0.2), 0 0 20px rgba(255, 255, 255, 0.45);
+  animation: loading 1.2s ease-in-out infinite alternate;
+}
+@keyframes loading {
+  to {
+    text-shadow: 0 0 2px rgba(12, 9, 192, 0.2), 0 0 3px rgba(0, 0, 0, 0.02),
+      0 0 0 rgba(0, 0, 0, 0), 0 0 0 rgba(255, 255, 255, 0),
+      0 0 0 rgba(0, 0, 0, 0), 0 0 0 rgba(255, 255, 255, 0),
+      0 0 0 rgba(255, 255, 255, 0);
+  }
 }
 
+.load span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.load span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.load span:nth-child(4) {
+  animation-delay: 0.45s;
+}
+.load span:nth-child(5) {
+  animation-delay: 0.6s;
+}
+.load span:nth-child(6) {
+  animation-delay: 0.75s;
+}
+.load span:nth-child(7) {
+  animation-delay: 0.9s;
+}
+.load span:nth-child(8) {
+  animation-delay: 1.05s;
+}
+.load span:nth-child(9) {
+  animation-delay: 1.2s;
+}
+.load span:nth-child(10) {
+  animation-delay: 1.35s;
+}
+.load span:nth-child(11) {
+  animation-delay: 1.5s;
+}
+.load span:nth-child(12) {
+  animation-delay: 1.65s;
+}
+.load span:nth-child(13) {
+  animation-delay: 1.8s;
+}
 .btn {
   align-self: center;
   background-color: #fff;
