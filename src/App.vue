@@ -1,86 +1,44 @@
 <template>
   <div id="root" />
-  <canvas ref="canvas" id="canvas" width="1000" height="1000"></canvas>
   <button class="btn btn-drop">坠落</button>
   <parabolic-ball class="btn btn-parabola" />
   <!-- <button class="btn btn-parabola"> 抛物 </button> -->
   <!-- <button class="btn btn-fade">淡入</button> -->
   <fade-button />
+  <DropButton></DropButton>
   <button class="btn btn-start">开始游戏！</button>
 </template>
 
 <script>
-import { FadeIn, FadeOut } from './scripts/fade/fade'
-import { KeyCode, KeyCodeMapTable } from './scripts/keycode'
-import { GameController, util, Button, buttons } from './scripts/drop/index'
-import ParabolicBall from './components/ParabolicBall'
-import { Sounds } from './sounds/index'
-import GenerateRandomLocElems from './scripts/fade/generate'
-import FadeButton from './components/FadeButton.vue'
+import { FadeIn, FadeOut } from "./scripts/fade/fade";
+import { KeyCode } from "./scripts/keycode";
+import ParabolicBall from "./components/ParabolicBall";
+import { Sounds } from "./sounds/index";
+import GenerateRandomLocElems from "./scripts/fade/generate";
+import FadeButton from "./components/FadeButton.vue";
+import DropButton from "./components/DropButton.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
     ParabolicBall,
     FadeButton,
+    DropButton,
   },
   mounted() {
-    let elem
-    let sound = new Sounds()
-    sound.playBackgroundAudio()
-    const dropBtn = document.getElementsByClassName('btn-drop')[0]
-    const parabolaBtn = document.getElementsByClassName('btn-parabola')[0]
-    const fadeBtn = document.getElementsByClassName('btn-fade')[0]
-    const startBtn = document.getElementsByClassName('btn-start')[0]
+    let elem;
+    let sound = new Sounds();
+    // sound.playBackgroundAudio()
+    const dropBtn = document.getElementsByClassName("btn-drop")[0];
+    const parabolaBtn = document.getElementsByClassName("btn-parabola")[0];
+    const fadeBtn = document.getElementsByClassName("btn-fade")[0];
+    const startBtn = document.getElementsByClassName("btn-start")[0];
 
-    dropBtn.addEventListener('click', () => {
-      /**
-       * drop样例展示
-       */
-      const canvas = document.querySelector('#canvas')
-      const ctx = canvas.getContext('2d')
-      // 定义游戏相关的配置项
-      const option = {
-        // 绘图函数
-        draw() {
-          util.background(canvas, ctx, 'white')
-          buttons.forEach((button) => {
-            button.drop(ctx)
-            button.update()
-          })
-        },
-        // 监听事件
-        events: {
-          // 键盘按下事件
-          keyPressed(key) {
-            //按键按下时触发一次，命中距离底部最近的按键
-            let targets = buttons.filter((button) => button.key === key)
-            if (targets.length != 0) {
-              targets.sort((a, b) => b.position.y - a.position.y)
-              targets[0].target()
-            }
-          },
-          // 用点击注册事件模拟按键产生过程
-          mousePressed() {
-            const position = util.createVector(310, 180)
-            if (position.y > 0.8 * window.innerHeight) return
-            const button = new Button(
-              `${KeyCodeMapTable.get(KeyCode[Math.floor(Math.random() * KeyCode.length)])}`,
-              position
-            )
-            buttons.push(button)
-          },
-        },
-      }
-      // 初始化游戏控制器
-      let gameController = new GameController(canvas, ctx, option)
-      // 游戏装载
-      gameController.setup()
-    })
+    dropBtn.addEventListener("click", () => {});
 
-    parabolaBtn.addEventListener('click', () => {})
+    parabolaBtn.addEventListener("click", () => {});
 
-    fadeBtn.addEventListener('click', () => {
+    fadeBtn.addEventListener("click", () => {
       /**
        * fade样例展示
        */
@@ -90,54 +48,54 @@ export default {
         width: 120,
         height: 60,
         keycode: KeyCode[Math.floor(Math.random() * KeyCode.length)],
-      }
-      let dom = document.getElementById('fadeExample')
-      if (dom) document.getElementById('root').removeChild(dom)
-      FadeIn(elem, 'fadeExample', 0)
-      document.addEventListener('keyup', (event) => {
+      };
+      let dom = document.getElementById("fadeExample");
+      if (dom) document.getElementById("root").removeChild(dom);
+      FadeIn(elem, "fadeExample", 0);
+      document.addEventListener("keyup", (event) => {
         if (event.keyCode === elem.keycode) {
-          FadeOut('fadeExample', 1)
+          FadeOut("fadeExample", 1);
         }
-      })
-    })
+      });
+    });
 
-    let id = '1'
-    let idList = new Map()
-    startBtn.addEventListener('click', () => {
-      dropBtn.style.display = 'none'
-      parabolaBtn.style.display = 'none'
-      fadeBtn.style.display = 'none'
+    let id = "1";
+    let idList = new Map();
+    startBtn.addEventListener("click", () => {
+      dropBtn.style.display = "none";
+      parabolaBtn.style.display = "none";
+      fadeBtn.style.display = "none";
       let si = setInterval(() => {
         // let effect = Math.floor(Math.random() * 3)
-        let randomElem = GenerateRandomLocElems()
+        let randomElem = GenerateRandomLocElems();
 
         // switch (effect) {
         //   case 0:
         //   case 1:
         //   case 2:
-        idList.set(randomElem.keycode, id)
-        FadeIn(randomElem, id++)
-        document.addEventListener('keyup', (event) => {
-          let idExist = idList.get(event.keyCode)
+        idList.set(randomElem.keycode, id);
+        FadeIn(randomElem, id++);
+        document.addEventListener("keyup", (event) => {
+          let idExist = idList.get(event.keyCode);
           if (idExist) {
-            idList.delete(idExist)
-            sound.playSuccess()
-            FadeOut(idExist, 1)
+            idList.delete(idExist);
+            sound.playSuccess();
+            FadeOut(idExist, 1);
           }
-        })
+        });
 
         // }
-      }, 2000)
-      let flag = false
+      }, 2000);
+      let flag = false;
       if (/* 音乐播放完 */ flag) {
-        clearInterval(si)
-        dropBtn.style.display = 'block'
-        parabolaBtn.style.display = 'block'
-        fadeBtn.style.display = 'block'
+        clearInterval(si);
+        dropBtn.style.display = "block";
+        parabolaBtn.style.display = "block";
+        fadeBtn.style.display = "block";
       }
-    })
+    });
   },
-}
+};
 </script>
 
 <style>
@@ -213,5 +171,158 @@ export default {
   position: fixed;
   right: 20%;
   bottom: 30%;
+}
+
+@keyframes shake-slow {
+  0% {
+    transform: translate(0px, 0px) rotate(0deg);
+  }
+  2% {
+    transform: translate(-6px, -8px) rotate(2.5deg);
+  }
+  4% {
+    transform: translate(3px, -9px) rotate(-0.5deg);
+  }
+  6% {
+    transform: translate(3px, -8px) rotate(2.5deg);
+  }
+  8% {
+    transform: translate(0px, 5px) rotate(0.5deg);
+  }
+  10% {
+    transform: translate(3px, 2px) rotate(0.5deg);
+  }
+  12% {
+    transform: translate(8px, 0px) rotate(0.5deg);
+  }
+  14% {
+    transform: translate(4px, 7px) rotate(-3.5deg);
+  }
+  16% {
+    transform: translate(-4px, 0px) rotate(-0.5deg);
+  }
+  18% {
+    transform: translate(1px, 3px) rotate(-1.5deg);
+  }
+  20% {
+    transform: translate(-8px, -1px) rotate(-3.5deg);
+  }
+  22% {
+    transform: translate(5px, 9px) rotate(2.5deg);
+  }
+  24% {
+    transform: translate(-9px, -10px) rotate(-2.5deg);
+  }
+  26% {
+    transform: translate(0px, 7px) rotate(-1.5deg);
+  }
+  28% {
+    transform: translate(-10px, 7px) rotate(2.5deg);
+  }
+  30% {
+    transform: translate(8px, -7px) rotate(-1.5deg);
+  }
+  32% {
+    transform: translate(0px, -8px) rotate(-0.5deg);
+  }
+  34% {
+    transform: translate(9px, 7px) rotate(-0.5deg);
+  }
+  36% {
+    transform: translate(-7px, 6px) rotate(0.5deg);
+  }
+  38% {
+    transform: translate(8px, -10px) rotate(-0.5deg);
+  }
+  40% {
+    transform: translate(8px, 0px) rotate(0.5deg);
+  }
+  42% {
+    transform: translate(0px, -2px) rotate(1.5deg);
+  }
+  44% {
+    transform: translate(5px, -2px) rotate(-0.5deg);
+  }
+  46% {
+    transform: translate(1px, -10px) rotate(-2.5deg);
+  }
+  48% {
+    transform: translate(4px, -1px) rotate(2.5deg);
+  }
+  50% {
+    transform: translate(-5px, -4px) rotate(2.5deg);
+  }
+  52% {
+    transform: translate(3px, 2px) rotate(-3.5deg);
+  }
+  54% {
+    transform: translate(1px, -6px) rotate(-0.5deg);
+  }
+  56% {
+    transform: translate(-3px, -4px) rotate(-0.5deg);
+  }
+  58% {
+    transform: translate(-10px, -10px) rotate(2.5deg);
+  }
+  60% {
+    transform: translate(8px, 7px) rotate(-3.5deg);
+  }
+  62% {
+    transform: translate(9px, -6px) rotate(-3.5deg);
+  }
+  64% {
+    transform: translate(-5px, 8px) rotate(-0.5deg);
+  }
+  66% {
+    transform: translate(1px, -3px) rotate(0.5deg);
+  }
+  68% {
+    transform: translate(-6px, 9px) rotate(1.5deg);
+  }
+  70% {
+    transform: translate(-5px, 8px) rotate(-1.5deg);
+  }
+  72% {
+    transform: translate(-10px, -2px) rotate(2.5deg);
+  }
+  74% {
+    transform: translate(0px, -4px) rotate(1.5deg);
+  }
+  76% {
+    transform: translate(-2px, -5px) rotate(0.5deg);
+  }
+  78% {
+    transform: translate(-2px, 9px) rotate(-3.5deg);
+  }
+  80% {
+    transform: translate(7px, 4px) rotate(-3.5deg);
+  }
+  82% {
+    transform: translate(-1px, -4px) rotate(-1.5deg);
+  }
+  84% {
+    transform: translate(3px, -6px) rotate(0.5deg);
+  }
+  86% {
+    transform: translate(7px, -8px) rotate(-1.5deg);
+  }
+  88% {
+    transform: translate(4px, -9px) rotate(1.5deg);
+  }
+  90% {
+    transform: translate(1px, -6px) rotate(2.5deg);
+  }
+  92% {
+    transform: translate(-8px, -1px) rotate(-1.5deg);
+  }
+  94% {
+    transform: translate(-4px, -1px) rotate(0.5deg);
+  }
+  96% {
+    transform: translate(-6px, 9px) rotate(1.5deg);
+  }
+  98% {
+    transform: translate(7px, 4px) rotate(-0.5deg);
+  }
 }
 </style>

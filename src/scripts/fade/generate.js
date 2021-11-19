@@ -1,4 +1,4 @@
-import { KeyCode } from '../keycode'
+import { KeyCode } from '../keycode';
 
 function GenerateRandomLocElems() {
   /**
@@ -10,7 +10,7 @@ function GenerateRandomLocElems() {
     width: 120,
     height: 80,
     keycode: KeyCode[Math.floor(Math.random() * KeyCode.length)],
-  }
+  };
 }
 
-export default GenerateRandomLocElems
+export default GenerateRandomLocElems;
