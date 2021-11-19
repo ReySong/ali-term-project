@@ -68,6 +68,7 @@ export default defineComponent({
         dropBtn.style.display = 'none'
         parabolaBtn.style.display = 'none'
         fadeBtn.style.display = 'none'
+        startBtn.style.display = 'none'
         let si = setInterval(() => {
           let effect = Math.floor(Math.random() * 3)
           let randomElem = GenerateRandomLocElems()
@@ -113,6 +114,7 @@ export default defineComponent({
           dropBtn.style.display = 'block'
           parabolaBtn.style.display = 'block'
           fadeBtn.style.display = 'block'
+          startBtn.style.display = 'block'
         }
       })
     })
