@@ -88,7 +88,7 @@ export default defineComponent({
                 let idExist = idList.get(event.keyCode);
                 if (idExist) {
                   score.value++;
-                  idList.delete(idExist);
+                  idList.delete(event.keyCode);
                   sound.playSuccess();
                   FadeOut(idExist, 1);
                 }

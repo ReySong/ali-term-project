@@ -89,7 +89,7 @@ function dropAnimation(target, sound, map) {
           sound.playFailure();
           map.delete(target.keycode);
           // target.removeEventListener('animationend');
-          root.removeChild(target);
+          if (target) root.removeChild(target);
           // setTimeout(() => {
           //   sound.playFailure();
           //   root.removeChild(target);
@@ -104,6 +104,6 @@ function dropAnimation(target, sound, map) {
     },
     false
   );
-  target.addEventListener('transitionend', () => {});
+  // target.addEventListener('transitionend', () => {});
 }
 export { DropIn, DropOut };
