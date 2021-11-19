@@ -87,9 +87,9 @@ function dropAnimation(target, sound, map) {
         if (record >= maxTop) {
           cancelAnimationFrame(target.rafId)
           sound.playFailure()
-          if (map !== undefined) map.delete(target.keycode)
+          map.delete(target.keycode)
           // target.removeEventListener('animationend');
-          root.removeChild(target)
+          if (target) root.removeChild(target)
           // setTimeout(() => {
           //   sound.playFailure();
           //   root.removeChild(target);
@@ -104,6 +104,6 @@ function dropAnimation(target, sound, map) {
     },
     false
   )
-  target.addEventListener('transitionend', () => {})
+  // target.addEventListener('transitionend', () => {});
 }
 export { DropIn, DropOut }

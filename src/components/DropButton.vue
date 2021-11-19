@@ -1,43 +1,62 @@
 <template>
-  <button>坠落</button>
+  <button>下落</button>
 </template>
 
 <script>
-import { defineComponent, onMounted } from 'vue'
-import { DropIn, DropOut } from '../scripts/drop/drop'
-import { KeyCode } from '../scripts/keycode'
-import { Sounds } from '../sounds/index'
-
+// import { $bus } from "../scripts/eventBus/bus";
+// import { DropIn, DropOut } from "../scripts/drop/drop";
+// import GenerateRandomLocElems from "../scripts/fade/generate";
+import { defineComponent, ref } from "vue";
 export default defineComponent({
-  name: 'DropButton',
-  props: ['sound'],
-  setup(props) {
-    let sound = new Sounds()
-    onMounted(() => {
-      sound.playBackgroundAudio()
-      const dropBtn = document.getElementsByClassName('btn-drop')[0]
+  name: "DropButton",
+  props: ["sound"],
+  setup() {
+    const score = ref(0);
+    // let id = "1";
+    // let idList = new Map();
+    // let si = setInterval(() => {
+    //   let randomElem = GenerateRandomLocElems();
+    //   idList.set(randomElem.keycode, id);
+    //   DropIn(randomElem, id++, props.sound, idList);
+    //   document.addEventListener("keyup", (e) => {
+    //     if (idList.size === 0) return;
+    //     let idExist = idList.get(e.keyCode);
+    //     if (idExist) {
+    //       idList.delete(e.keyCode);
+    //       props.sound.playSuccess();
+    //       score.value++;
+    //       DropOut(idExist);
+    //     }
+    //     e.preventDefault();
+    //   });
+    // }, 4000);
+    // document.onvisibilitychange = function () {
+    //   if (document.visibilityState == "visible") {
+    //     si = setInterval(() => {
+    //       let randomElem = GenerateRandomLocElems();
+    //       idList.set(randomElem.keycode, id);
+    //       DropIn(randomElem, id++, props.sound, idList);
+    //       document.addEventListener("keyup", (e) => {
+    //         if (idList.size === 0) return;
+    //         let idExist = idList.get(e.keyCode);
+    //         if (idExist) {
+    //           idList.delete(e.keyCode);
+    //           props.sound.playSuccess();
+    //           score.value++;
+    //           DropOut(idExist);
+    //         }
+    //         e.preventDefault();
+    //       });
+    //     }, 4000);
+    //   } else {
+    //     clearInterval(si);
+    //   }
+    // };
+    // $bus.on("bgDone", () => {
+    //   clearInterval(si);
+    // });
 
-      /**
-       * drop样例展示
-       */
-      dropBtn.addEventListener('click', () => {
-        let dropElem = {
-          top: 30,
-          right: 78,
-          width: 120,
-          height: 60,
-          keycode: KeyCode[Math.floor(Math.random() * KeyCode.length)],
-        }
-        let dom = document.getElementById('dropExample')
-        if (dom) document.getElementById('root').removeChild(dom)
-        DropIn(dropElem, 'dropExample', props.sound, undefined)
-        document.addEventListener('keyup', (event) => {
-          if (event.keyCode === dropElem.keycode) {
-            DropOut('dropExample')
-          }
-        })
-      })
-    })
+    return { score };
   },
-})
+});
 </script>

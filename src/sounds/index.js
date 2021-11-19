@@ -1,10 +1,10 @@
 // todo 我不知道 vue 的脚手架怎么配置来支持静态资源文件，所以暂时用这种方法
 // const soundsFileURI = 'https://github.com/Zen-Song/Zen-Song.Github.io/blob/master/src/';
+import { $bus } from '../scripts/eventBus/bus';
 const successAudio = require('./success.mp3');
 const failureAudio = require('./failure.mp3');
 const doneAudio = require('./done.mp3');
 const backgroundAudio = require('./background.mp3');
-
 export default class Sounds {
   constructor() {
     // initialize and preload sounds
@@ -27,7 +27,12 @@ export default class Sounds {
   }
 
   playBackgroundAudio() {
-    this.backgroundAudio.play();
+    const bg = this.backgroundAudio;
+    bg.play().then(() => {
+      bg.addEventListener('ended', () => {
+        $bus.emit('bgDone');
+      });
+    });
   }
 }
 

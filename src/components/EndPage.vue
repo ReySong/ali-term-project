@@ -4,7 +4,7 @@
       <span>Game Over</span><br />
       <span>Your Score</span><br />
       <span ref="countup" class="text"></span>
-      <button class="btn">返回首页</button>
+      <button class="btn" @click="jumpToHome()">返回首页</button>
     </div>
   </div>
 </template>
@@ -33,6 +33,11 @@ export default {
         console.error(demo.error)
       }
     },
+    jumpToHome() {
+      this.$router.push({
+        path: 'game',
+      })
+    },
   },
 }
 </script>
@@ -41,7 +46,7 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@200&display=swap');
 
 .background {
-  background: url('../../public/backgroud.jpg');
+  background: url('../../public/background.jpg');
   width: 100%;
   height: 100%;
   position: fixed;
