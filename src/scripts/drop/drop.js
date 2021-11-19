@@ -1,9 +1,9 @@
 import { KeyCodeMapTable } from '../keycode';
-let rafId = null;
-function DropIn(elem, id) {
+function DropIn(elem, id, sound, map) {
   const root = document.getElementById('root');
   const keyValue = KeyCodeMapTable.get(elem.keycode);
   let div = document.createElement('div');
+  div.keycode = elem.keycode;
   div.id = `${id}`;
   div.value = elem.keycode;
   div.style.position = 'fixed';
@@ -43,25 +43,23 @@ function DropIn(elem, id) {
   div.style.opacity = 1;
   div.style.visibility = 'visible';
   root.appendChild(div);
-  setTimeout(() => {
-    let isExsit = document.getElementById(id);
-    if (isExsit) {
-      isExsit.style.animation = '0.5s shake-slow';
-      dropAnimation(isExsit);
-    }
-  }, 1000);
+  let isExsit = document.getElementById(id);
+  if (isExsit) {
+    isExsit.style.animation = '0.5s linear 1s shake-slow';
+    dropAnimation(isExsit, sound, map);
+  }
 }
 
 function DropOut(target) {
-  cancelAnimationFrame(rafId);
-  let root = document.getElementById('root');
   let dom = document.getElementById(target);
-  dom.style.opacity = 0;
-  setTimeout(() => {
+  let root = document.getElementById('root');
+  if (dom) {
+    cancelAnimationFrame(dom.rafId);
+    dom.style.opacity = 0;
     root.removeChild(dom);
-  }, 500);
+  }
 }
-function dropAnimation(target) {
+function dropAnimation(target, sound, map) {
   let root = document.getElementById('root');
   let top = target.style.top.match(/(.+)%$/)[1];
   target.addEventListener(
@@ -75,7 +73,7 @@ function dropAnimation(target) {
       let maxTop = Infinity; //max-202.5
       let countFlag = true;
       let drop = time => {
-        rafId = requestAnimationFrame(drop);
+        target.rafId = requestAnimationFrame(drop);
         // 锁60帧
         if (time - lastFrameTime < 1000 / 60) {
           return;
@@ -87,22 +85,25 @@ function dropAnimation(target) {
           return;
         }
         if (record >= maxTop) {
-          cancelAnimationFrame(rafId);
-          setTimeout(() => {
-            root.removeChild(target);
-          }, 0);
+          cancelAnimationFrame(target.rafId);
+          sound.playFailure();
+          map.delete(target.keycode);
+          // target.removeEventListener('animationend');
+          root.removeChild(target);
+          // setTimeout(() => {
+          //   sound.playFailure();
+          //   root.removeChild(target);
+          // }, 0);
           return;
         }
         record = Number(top) + loop * acc;
         target.style.top = `${record}%`;
         loop++;
       };
-      rafId = requestAnimationFrame(drop);
+      target.rafId = requestAnimationFrame(drop);
     },
     false
   );
-  target.addEventListener('transitionend', () => {
-    console.log('transitionend');
-  });
+  target.addEventListener('transitionend', () => {});
 }
 export { DropIn, DropOut };

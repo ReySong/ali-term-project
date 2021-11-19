@@ -1,31 +1,38 @@
 <template>
-  <div></div>
+  <div>得分{{score}}</div>
 </template>
 
 <script>
 import { DropIn, DropOut } from "../scripts/drop/drop";
 import GenerateRandomLocElems from "../scripts/fade/generate";
-import { defineComponent, onMounted } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 export default defineComponent({
   name: "DropButton",
   props: ["sound"],
   setup(props) {
+    const score = ref(0);
     let id = "1";
     let idList = new Map();
     onMounted(() => {
       const dropBtn = document.getElementsByClassName("btn-drop")[0];
+      let i = 0;
       dropBtn.addEventListener("click", () => {
         let si = setInterval(() => {
           let randomElem = GenerateRandomLocElems();
           idList.set(randomElem.keycode, id);
-          DropIn(randomElem, id++);
-          document.addEventListener("keyup", (event) => {
-            let idExist = idList.get(event.keyCode);
+          DropIn(randomElem, id++, props.sound, idList);
+          document.addEventListener("keyup", (e) => {
+            if (idList.size === 0) return;
+            let idExist = idList.get(e.keyCode);
             if (idExist) {
-              idList.delete(idExist);
+              console.log(++i);
+              idList.delete(e.keyCode);
+              console.log(idList);
               props.sound.playSuccess();
+              score.value++;
               DropOut(idExist);
             }
+            event.preventDefault();
           });
         }, 2000);
         let flag = false;
@@ -35,7 +42,7 @@ export default defineComponent({
         }
       });
     });
-    return {};
+    return { score };
   },
 });
 </script>

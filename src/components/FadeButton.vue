@@ -34,7 +34,6 @@ export default {
             FadeOut(idExist, 1);
           }
         });
-
         // }
       }, 2000);
       let flag = false;
