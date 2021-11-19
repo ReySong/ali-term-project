@@ -16,105 +16,145 @@
     <span>e</span>
   </h1>
   <div id="root" />
-  <button class="btn btn-drop">坠落</button>
+  <div id="counter">{{ score }}</div>
   <parabolic-ball class="btn btn-parabola" :sound="sound" />
-  <!-- <button class="btn btn-parabola"> 抛物 </button> -->
-  <!-- <button class="btn btn-fade">淡入</button> -->
-  <fade-button :sound="sound" />
-  <DropButton :sound="sound"></DropButton>
+  <fade-button class="btn btn-fade" :sound="sound" />
+  <drop-button class="btn btn-drop" :sound="sound"></drop-button>
   <button class="btn btn-start">开始游戏！</button>
 </template>
 
 <script>
-import { FadeIn, FadeOut } from "./scripts/fade/fade";
-import { KeyCode } from "./scripts/keycode";
+import { defineComponent, ref, onMounted, reactive } from "vue";
 import ParabolicBall from "./components/ParabolicBall";
-import { Sounds } from "./sounds/index";
-import GenerateRandomLocElems from "./scripts/fade/generate";
 import FadeButton from "./components/FadeButton.vue";
 import DropButton from "./components/DropButton.vue";
+import { Sounds } from "./sounds/index";
+import GenerateRandomLocElems from "./scripts/fade/generate";
+import { FadeIn, FadeOut } from "./scripts/fade/fade";
+import { DropIn, DropOut } from "./scripts/drop/drop";
+import { $bus } from "./scripts/eventBus/bus";
 
-export default {
+export default defineComponent({
   name: "App",
   components: {
     ParabolicBall,
     FadeButton,
     DropButton,
   },
-  data() {
-    this.sound = new Sounds();
-  },
-  mounted() {
-    let elem;
-    this.sound.playBackgroundAudio();
-    const dropBtn = document.getElementsByClassName("btn-drop")[0];
-    const parabolaBtn = document.getElementsByClassName("btn-parabola")[0];
-    const fadeBtn = document.getElementsByClassName("btn-fade")[0];
-    const startBtn = document.getElementsByClassName("btn-start")[0];
-    const title = document.querySelector(".title");
-    dropBtn.addEventListener("click", () => {});
-
-    parabolaBtn.addEventListener("click", () => {});
-
-    fadeBtn.addEventListener("click", () => {
-      /**
-       * fade样例展示
-       */
-      elem = {
-        top: 30,
-        right: 22.3,
-        width: 120,
-        height: 60,
-        keycode: KeyCode[Math.floor(Math.random() * KeyCode.length)],
-      };
-      let dom = document.getElementById("fadeExample");
-      if (dom) document.getElementById("root").removeChild(dom);
-      FadeIn(elem, "fadeExample", 0);
-      document.addEventListener("keyup", (event) => {
-        if (event.keyCode === elem.keycode) {
-          FadeOut("fadeExample", 1);
-        }
+  setup() {
+    const sound = reactive(new Sounds());
+    const score = ref(0);
+    onMounted(() => {
+      sound.playBackgroundAudio();
+      const dropBtn = document.getElementsByClassName("btn-drop")[0];
+      const parabolaBtn = document.getElementsByClassName("btn-parabola")[0];
+      const fadeBtn = document.getElementsByClassName("btn-fade")[0];
+      const startBtn = document.getElementsByClassName("btn-start")[0];
+      const title = document.querySelector(".load");
+      let id = "1";
+      let idList = new Map();
+      startBtn.addEventListener("click", () => {
+        dropBtn.style.display = "none";
+        parabolaBtn.style.display = "none";
+        fadeBtn.style.display = "none";
+        title.style.display = "none";
+        let si = setInterval(() => {
+          let effect = Math.floor(Math.random() * 3);
+          let randomElem = GenerateRandomLocElems();
+          idList.set(randomElem.keycode, id);
+          switch (effect) {
+            case 0:
+              break;
+            case 1:
+              DropIn(randomElem, id++, sound, idList);
+              document.addEventListener("keyup", (e) => {
+                if (idList.size === 0) return;
+                let idExist = idList.get(e.keyCode);
+                if (idExist) {
+                  score.value++;
+                  idList.delete(e.keyCode);
+                  sound.playSuccess();
+                  DropOut(idExist);
+                }
+                event.preventDefault();
+              });
+              break;
+            case 2:
+              FadeIn(randomElem, id++);
+              document.addEventListener("keyup", (event) => {
+                let idExist = idList.get(event.keyCode);
+                if (idExist) {
+                  score.value++;
+                  idList.delete(idExist);
+                  sound.playSuccess();
+                  FadeOut(idExist, 1);
+                }
+              });
+              break;
+            default:
+              break;
+          }
+        }, 2000);
+        // 切选项卡停止动画
+        document.onvisibilitychange = function () {
+          if (document.visibilityState == "visible") {
+            si = setInterval(() => {
+              let effect = Math.floor(Math.random() * 3);
+              let randomElem = GenerateRandomLocElems();
+              idList.set(randomElem.keycode, id);
+              switch (effect) {
+                case 0:
+                  break;
+                case 1:
+                  DropIn(randomElem, id++, sound, idList);
+                  document.addEventListener("keyup", (e) => {
+                    if (idList.size === 0) return;
+                    let idExist = idList.get(e.keyCode);
+                    if (idExist) {
+                      score.value++;
+                      idList.delete(e.keyCode);
+                      sound.playSuccess();
+                      DropOut(idExist);
+                    }
+                    event.preventDefault();
+                  });
+                  break;
+                case 2:
+                  FadeIn(randomElem, id++);
+                  document.addEventListener("keyup", (event) => {
+                    let idExist = idList.get(event.keyCode);
+                    if (idExist) {
+                      score.value++;
+                      idList.delete(idExist);
+                      sound.playSuccess();
+                      FadeOut(idExist, 1);
+                    }
+                  });
+                  break;
+                default:
+                  break;
+              }
+            }, 2000);
+          } else {
+            clearInterval(si);
+          }
+        };
+        /* 音乐播放完 */
+        $bus.on("bgDone", () => {
+          clearInterval(si);
+          dropBtn.style.display = "block";
+          parabolaBtn.style.display = "block";
+          fadeBtn.style.display = "block";
+          title.style.display = "block";
+        });
       });
     });
-
-    let id = "1";
-    let idList = new Map();
-    startBtn.addEventListener("click", () => {
-      dropBtn.style.display = "none";
-      parabolaBtn.style.display = "none";
-      fadeBtn.style.display = "none";
-      title.style.display = "none";
-      let si = setInterval(() => {
-        // let effect = Math.floor(Math.random() * 3)
-        let randomElem = GenerateRandomLocElems();
-
-        // switch (effect) {
-        //   case 0:
-        //   case 1:
-        //   case 2:
-        idList.set(randomElem.keycode, id);
-        FadeIn(randomElem, id++);
-        document.addEventListener("keyup", (event) => {
-          let idExist = idList.get(event.keyCode);
-          if (idExist) {
-            idList.delete(idExist);
-            this.sound.playSuccess();
-            FadeOut(idExist, 1);
-          }
-        });
-
-        // }
-      }, 2000);
-      let flag = false;
-      if (/* 音乐播放完 */ flag) {
-        clearInterval(si);
-        dropBtn.style.display = "block";
-        parabolaBtn.style.display = "block";
-        fadeBtn.style.display = "block";
-      }
-    });
+    return {
+      score,
+      sound,
+    };
   },
-};
+});
 </script>
 
 <style>
@@ -152,7 +192,6 @@ h1.load {
       0 0 0 rgba(255, 255, 255, 0);
   }
 }
-
 .load span:nth-child(2) {
   animation-delay: 0.15s;
 }
@@ -188,6 +227,11 @@ h1.load {
 }
 .load span:nth-child(13) {
   animation-delay: 1.8s;
+}
+.counter {
+  position: fixed;
+  top: 2%;
+  left: 5%;
 }
 .btn {
   align-self: center;

@@ -42,9 +42,12 @@ function FadeIn(elem, id) {
   div.style.opacity = 0
   div.style.visibility = 'hidden'
   div.style.transition = 'all .2s linear'
-  div.style.opacity = 1
-  div.style.visibility = 'visible'
   root.appendChild(div)
+
+  setTimeout(() => {
+    div.style.opacity = 1
+    div.style.visibility = 'visible'
+  }, 200)
   setTimeout(() => {
     let isExsit = document.getElementById(id)
     if (isExsit) {
