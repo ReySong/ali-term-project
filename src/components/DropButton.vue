@@ -1,97 +1,43 @@
 <template>
-  <div>得分{{score}}</div>
+  <button>坠落</button>
 </template>
 
 <script>
-import { DropIn, DropOut } from "../scripts/drop/drop";
-import GenerateRandomLocElems from "../scripts/fade/generate";
-import { defineComponent, onMounted, ref } from "vue";
+import { defineComponent, onMounted } from 'vue'
+import { DropIn, DropOut } from '../scripts/drop/drop'
+import { KeyCode } from '../scripts/keycode'
+import { Sounds } from '../sounds/index'
+
 export default defineComponent({
-  name: "DropButton",
-  props: ["sound"],
+  name: 'DropButton',
+  props: ['sound'],
   setup(props) {
-    const score = ref(0);
-    let id = "1";
-    let idList = new Map();
+    let sound = new Sounds()
     onMounted(() => {
-      const dropBtn = document.getElementsByClassName("btn-drop")[0];
-      let i = 0;
-      dropBtn.addEventListener("click", () => {
-        let si = setInterval(() => {
-          let randomElem = GenerateRandomLocElems();
-          idList.set(randomElem.keycode, id);
-          DropIn(randomElem, id++, props.sound, idList);
-          document.addEventListener("keyup", (e) => {
-            if (idList.size === 0) return;
-            let idExist = idList.get(e.keyCode);
-            if (idExist) {
-              console.log(++i);
-              idList.delete(e.keyCode);
-              console.log(idList);
-              props.sound.playSuccess();
-              score.value++;
-              DropOut(idExist);
-            }
-            event.preventDefault();
-          });
-        }, 2000);
-        let flag = false;
-        /* 音乐播放完 */
-        if (flag) {
-          clearInterval(si);
+      sound.playBackgroundAudio()
+      const dropBtn = document.getElementsByClassName('btn-drop')[0]
+
+      /**
+       * drop样例展示
+       */
+      dropBtn.addEventListener('click', () => {
+        let dropElem = {
+          top: 30,
+          right: 78,
+          width: 120,
+          height: 60,
+          keycode: KeyCode[Math.floor(Math.random() * KeyCode.length)],
         }
-      });
-    });
-    return { score };
+        let dom = document.getElementById('dropExample')
+        if (dom) document.getElementById('root').removeChild(dom)
+        DropIn(dropElem, 'dropExample', props.sound, undefined)
+        document.addEventListener('keyup', (event) => {
+          if (event.keyCode === dropElem.keycode) {
+            DropOut('dropExample')
+          }
+        })
+      })
+    })
   },
-});
+})
 </script>
-
-<style scoped>
-.btn {
-  align-self: center;
-  background-color: #fff;
-  background-image: none;
-  background-position: 0 90%;
-  background-repeat: repeat no-repeat;
-  background-size: 4px 3px;
-  border-radius: 15px 225px 255px 15px 15px 255px 225px 15px;
-  border-style: solid;
-  border-width: 2px;
-  box-shadow: rgba(0, 0, 0, 0.2) 15px 28px 25px -18px;
-  box-sizing: border-box;
-  color: #41403e;
-  cursor: pointer;
-  display: inline-block;
-  font-family: Neucha, sans-serif;
-  font-size: 1rem;
-  line-height: 23px;
-  outline: none;
-  padding: 0.75rem;
-  text-decoration: none;
-  transition: all 235ms ease-in-out;
-  border-bottom-left-radius: 15px 255px;
-  border-bottom-right-radius: 225px 15px;
-  border-top-left-radius: 255px 15px;
-  border-top-right-radius: 15px 225px;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-}
-
-.btn:hover {
-  box-shadow: rgba(0, 0, 0, 0.3) 2px 8px 8px -5px;
-  transform: translate3d(0, 2px, 0);
-}
-
-.btn:focus {
-  box-shadow: rgba(0, 0, 0, 0.3) 2px 8px 4px -6px;
-}
-
-.btn-fade {
-  position: fixed;
-  right: 20%;
-  bottom: 30%;
-  /* transform: translate(-50%); */
-}
-</style>
