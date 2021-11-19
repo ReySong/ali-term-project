@@ -33,7 +33,7 @@ import { Sounds } from '../sounds/index'
 import GenerateRandomLocElems from '../scripts/fade/generate'
 import { FadeIn, FadeOut } from '../scripts/fade/fade'
 import { DropIn, DropOut } from '../scripts/drop/drop'
-// import { $bus } from './scripts/eventBus/bus'
+import { $bus } from '../scripts/eventBus/bus'
 
 export default defineComponent({
   name: 'Game',
@@ -145,16 +145,16 @@ export default defineComponent({
           }
         }
         /* 音乐播放完 */
-        // $bus.on('bgDone', () => {
-        clearInterval(si)
-        dropBtn.style.display = 'block'
-        parabolaBtn.style.display = 'block'
-        fadeBtn.style.display = 'block'
-        title.style.display = 'block'
-        router.push({
-          path: 'end',
+        $bus.on('bgDone', () => {
+          clearInterval(si)
+          dropBtn.style.display = 'block'
+          parabolaBtn.style.display = 'block'
+          fadeBtn.style.display = 'block'
+          title.style.display = 'block'
+          router.push({
+            path: 'end',
+          })
         })
-        // })
         DropOut('start')
       })
     })
