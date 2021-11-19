@@ -3,47 +3,47 @@
 </template>
 
 <script>
-import { FadeIn, FadeOut } from '../scripts/fade/fade'
-import { Sounds } from '../sounds/index'
-import GenerateRandomLocElems from '../scripts/fade/generate'
+import { FadeIn, FadeOut } from "../scripts/fade/fade";
+import { Sounds } from "../sounds/index";
+import GenerateRandomLocElems from "../scripts/fade/generate";
 
 export default {
-  name: 'FadeButton',
+  name: "FadeButton",
   mounted() {
-    let sound = new Sounds()
-    sound.playBackgroundAudio()
-    const fadeBtn = document.getElementsByClassName('btn-fade')[0]
-    let id = '1'
-    let idList = new Map()
-    fadeBtn.addEventListener('click', () => {
+    let sound = new Sounds();
+    sound.playBackgroundAudio();
+    const fadeBtn = document.getElementsByClassName("btn-fade")[0];
+    let id = "1";
+    let idList = new Map();
+    fadeBtn.addEventListener("click", () => {
       let si = setInterval(() => {
         // let effect = Math.floor(Math.random() * 3)
-        let randomElem = GenerateRandomLocElems()
+        let randomElem = GenerateRandomLocElems();
 
         // switch (effect) {
         //   case 0:
         //   case 1:
         //   case 2:
-        idList.set(randomElem.keycode, id)
-        FadeIn(randomElem, id++)
-        document.addEventListener('keyup', (event) => {
-          let idExist = idList.get(event.keyCode)
+        idList.set(randomElem.keycode, id);
+        FadeIn(randomElem, id++);
+        document.addEventListener("keyup", (event) => {
+          let idExist = idList.get(event.keyCode);
           if (idExist) {
-            idList.delete(idExist)
-            sound.playSuccess()
-            FadeOut(idExist, 1)
+            idList.delete(idExist);
+            sound.playSuccess();
+            FadeOut(idExist, 1);
           }
-        })
+        });
 
         // }
-      }, 2000)
-      let flag = false
+      }, 2000);
+      let flag = false;
       if (/* 音乐播放完 */ flag) {
-        clearInterval(si)
+        clearInterval(si);
       }
-    })
+    });
   },
-}
+};
 </script>
 
 <style scoped>

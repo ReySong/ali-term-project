@@ -1,11 +1,11 @@
 <template>
   <div id="root" />
   <button class="btn btn-drop">坠落</button>
-  <parabolic-ball class="btn btn-parabola" />
+  <parabolic-ball class="btn btn-parabola" :sound="sound" />
   <!-- <button class="btn btn-parabola"> 抛物 </button> -->
   <!-- <button class="btn btn-fade">淡入</button> -->
-  <fade-button />
-  <DropButton></DropButton>
+  <fade-button :sound="sound" />
+  <DropButton :sound="sound"></DropButton>
   <button class="btn btn-start">开始游戏！</button>
 </template>
 
@@ -25,10 +25,12 @@ export default {
     FadeButton,
     DropButton,
   },
+  data() {
+    this.sound = new Sounds();
+  },
   mounted() {
     let elem;
-    let sound = new Sounds();
-    // sound.playBackgroundAudio()
+    this.sound.playBackgroundAudio();
     const dropBtn = document.getElementsByClassName("btn-drop")[0];
     const parabolaBtn = document.getElementsByClassName("btn-parabola")[0];
     const fadeBtn = document.getElementsByClassName("btn-fade")[0];
@@ -79,7 +81,7 @@ export default {
           let idExist = idList.get(event.keyCode);
           if (idExist) {
             idList.delete(idExist);
-            sound.playSuccess();
+            this.sound.playSuccess();
             FadeOut(idExist, 1);
           }
         });

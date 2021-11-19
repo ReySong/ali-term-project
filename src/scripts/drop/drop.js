@@ -1,6 +1,5 @@
 import { KeyCodeMapTable } from '../keycode';
-// import { Sounds } from '../../sounds/index';
-
+let rafId = null;
 function DropIn(elem, id) {
   const root = document.getElementById('root');
   const keyValue = KeyCodeMapTable.get(elem.keycode);
@@ -48,17 +47,23 @@ function DropIn(elem, id) {
     let isExsit = document.getElementById(id);
     if (isExsit) {
       isExsit.style.animation = '0.5s shake-slow';
-      DropOut(isExsit, 1);
+      dropAnimation(isExsit);
     }
   }, 1000);
 }
 
-function DropOut(dom) {
+function DropOut(target) {
+  cancelAnimationFrame(rafId);
   let root = document.getElementById('root');
-  let topLevel = dom.style.top.match(/(.+)%$/)[1];
-  dropAnimation(root, dom, topLevel);
+  let dom = document.getElementById(target);
+  dom.style.opacity = 0;
+  setTimeout(() => {
+    root.removeChild(dom);
+  }, 500);
 }
-function dropAnimation(root, target, top) {
+function dropAnimation(target) {
+  let root = document.getElementById('root');
+  let top = target.style.top.match(/(.+)%$/)[1];
   target.addEventListener(
     'animationend',
     function () {
@@ -66,7 +71,6 @@ function dropAnimation(root, target, top) {
       let record = top;
       let acc = 1.5;
       let loop = 1;
-      let rafId = null;
       let lastFrameTime = 0;
       let maxTop = Infinity; //max-202.5
       let countFlag = true;

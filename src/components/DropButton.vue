@@ -4,35 +4,36 @@
 
 <script>
 import { DropIn, DropOut } from "../scripts/drop/drop";
-import { Sounds } from "../sounds/index";
 import GenerateRandomLocElems from "../scripts/fade/generate";
 import { defineComponent, onMounted } from "vue";
 export default defineComponent({
   name: "DropButton",
-  setup() {
+  props: ["sound"],
+  setup(props) {
     let id = "1";
     let idList = new Map();
-    let sound = new Sounds();
-    sound.playBackgroundAudio();
     onMounted(() => {
-      let si = setInterval(() => {
-        let randomElem = GenerateRandomLocElems();
-        idList.set(randomElem.keycode, id);
-        DropIn(randomElem, id++);
-        document.addEventListener("keyup", (event) => {
-          let idExist = idList.get(event.keyCode);
-          if (idExist) {
-            idList.delete(idExist);
-            sound.playSuccess();
-            DropOut(idExist, 1);
-          }
-        });
-      }, 2000);
-      let flag = false;
-      /* 音乐播放完 */
-      if (flag) {
-        clearInterval(si);
-      }
+      const dropBtn = document.getElementsByClassName("btn-drop")[0];
+      dropBtn.addEventListener("click", () => {
+        let si = setInterval(() => {
+          let randomElem = GenerateRandomLocElems();
+          idList.set(randomElem.keycode, id);
+          DropIn(randomElem, id++);
+          document.addEventListener("keyup", (event) => {
+            let idExist = idList.get(event.keyCode);
+            if (idExist) {
+              idList.delete(idExist);
+              props.sound.playSuccess();
+              DropOut(idExist);
+            }
+          });
+        }, 2000);
+        let flag = false;
+        /* 音乐播放完 */
+        if (flag) {
+          clearInterval(si);
+        }
+      });
     });
     return {};
   },
