@@ -1,15 +1,16 @@
 <template>
-    <div id="hahaha" @click="playGame()" >点击一下出现一组抛物线盒子</div>
+<div>
+    <button class="btn" id="box" @click="playGame()">Play Game</button>
     <!-- <button @click="removeDiv">点击此处删除存在画面的第一个div</button> -->
-    <h1>得分{{yourScore}}</h1>
+    <div id="scoreBox">yourScore:{{yourScore}}</div>
+</div>
 </template>
 
 
 <script>
-
-import TimelineLite from '../../public/assets/js/TweenMax.min';
-import TweenLite from '../../public/assets/js/TweenMax.min'
-import {Sounds} from '../../public/assets/sounds/index'
+import TimelineLite from '../scripts/TweenMax.min';
+import TweenLite from '../scripts/TweenMax.min'
+import {Sounds} from '../sounds/index'
 
 import {nanoid} from 'nanoid'
 export default {
@@ -28,7 +29,8 @@ export default {
             divCount:0, 
             // 生成多少个字符，控制游戏难度
             letterLength:20,
-            sound:new Sounds()
+            sound:new Sounds(),
+            isShow:true
         }
     },
     methods:{
@@ -36,16 +38,15 @@ export default {
         makeid(length) {
             let text = [];
             var possible ="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
             for (let i = 0; i < length; i++)
                 text.push( possible.charAt(Math.floor(Math.random() * possible.length)));
-
             return text;
         },
         // Demo阶段（不完善），点击一下出现一组盒子，按照1.5秒间隔出现，完全版，应该是传入一个字符串数组按照不定的间隔依次出现
         playGame() {
             let lettersArray = this.makeid(this.letterLength);
             this.yourScore = 0;
+            document.getElementById("box").remove()
             this.sound.playBackgroundAudio()
             for (let i = 0; i < lettersArray.length; i++){
                 setTimeout(()=>{
@@ -53,7 +54,6 @@ export default {
                 },i*1000)
             }
         },
-
         removeDiv() {
             if(!this.idArray.length) return;
             let elementId = this.idArray.shift().id;
@@ -61,7 +61,6 @@ export default {
             element.remove();
             // console.log(this.idArray)
         },
-
         getRandom (n, m) {
             var num = Math.floor(Math.random() * (m - n + 1) + n)
             return num
@@ -93,28 +92,23 @@ export default {
         item.textContent = letter;
         this.idArray.push({id:item.id,keyValue:letter});
         // console.log(this.idArray);
-
         // 目的地
         const targetTop =  document.body.offsetHeight ;
         const targetLeft = this.getRandom(800,document.body.offsetWidth) ;
         // console.log(targetTop, targetLeft)
-
         // 采用固定动画时长方式
         // 前者为动画预计执行时间 (非真正看到的动画时间正相关)
         // 后者为每次动画执行间隔 (以普通60Hz的显示器为示范，每次刷新的间隔为 1/60 s)
         let Time = time /0.02 || (4 / 0.02);
-
         let Xspeed = (targetLeft - (startPosition.x)) / Time;
         let Yspeed = -10;
         // 控制下坠速度
         // 设置一个加速度A  已知 L = 0.5 * A * T * T + Y * T
         let A = (2 * (targetTop - (startPosition.y) - Yspeed * Time)) / (Time * Time);
-
         // 时间单位 用以配合加速度计算当前速度 speed = Yspeed + A * T
         let loop = 0;
         let nowX  = startPosition.x;
         let nowY  = startPosition.y;
-
         // 解决少数浏览器兼容性问题
         if (!window.requestAnimationFrame) {
             window.requestAnimationFrame = (fn, t = 16.6) => {
@@ -132,7 +126,7 @@ export default {
                 })
                 if (preLength > this.idArray.length) {
                     item.remove();
-                    this.yourScore -= 2;
+                    // this.yourScore -= 2;
                     this.sound.playFailure()
                     this.divCount ++
                     // console.log(this.divCount)
@@ -140,6 +134,10 @@ export default {
                     this.sound.pauseBackgroundAudio()
                     this.sound.playDone()
                     this.divCount = 0
+                    this.isShow = false
+                    this.$bus.emit('setScore',this.yourScore)
+                    // this.$router.push({path:'/end', query:{score:this.yourScore}})
+                    this.$router.push('/end')
                     }
                 }
                 // console.log(this.idArray)
@@ -205,7 +203,6 @@ export default {
                     //this is where we do the animation...
                     TweenLite.to(dot, 1 + Math.random(), {
                         opacity: 0,
-
                         //if you'd rather not do physics, you could just animate out directly by using the following 2 lines instead of the physics2D:
                         x: Math.cos(angle) * length * 24,
                         y: Math.sin(angle) * length * 24
@@ -221,18 +218,25 @@ export default {
                 let offsetTop = document.getElementById(explodeDivId).offsetTop;
                 let width = document.getElementById(explodeDivId).offsetWidth;
                 let height =document.getElementById(explodeDivId).offsetHeight;
-
                 TweenLite.set(container, {
                     x: offsetLeft + width / 2,
                     y: offsetTop + height / 2
                 });
             }
-
             function getRandom(min, max) {
                 return min + Math.random() * (max - min);
             }
         }
     },
+    // watch:{
+    //     yourScore:{
+    //         immediate:true,
+    //         handler(newValue,oldValue){
+    //             console.log('yourScore被修改了',newValue,oldValue)
+    //             echartScore('scoreBox',newValue)
+    //         }
+    //     }
+    // },
     mounted() {
         // 按下按键消除画面存在的第一个符合条件的div盒子
         document.addEventListener('keyup',(e)=>{
@@ -256,33 +260,49 @@ export default {
                         this.sound.pauseBackgroundAudio()
                         this.sound.playDone()
                         this.divCount = 0
+                        this.isShow = false
+                        this.$bus.emit('setScore',this.yourScore)
+                        this.$router.push('/end')
+                        // this.$router.push({path:'/end', query:{score:this.yourScore}})
                     }
                     // console.log(this.idArray)
                     break
                 }
             }
         })
-    },
+    }
+    
 }
 </script>
 
 <style>
+@import url('https://fonts.googleapis.com/css?family=Abril+Fatface');
 body {
     width: 100%;
     height:100%;
     margin:0;
    /* background-color:black; */
 }
-#hahaha {
-    position: absolute;
-    padding: 5px;
-    transform: translate(-50%, -50%);
-    top: 20%;
-    left: 10%;
-    font-size: 20px;
-    color: #6D6D6D;
-    user-select: none;
+
+#scoreBox{
+    content: "0"counter(my-awesome-counter);
+    font-weight: bold;
+    font-size: 3rem;
+    margin-right: 3%;
+    font-family: 'Abril Fatface', serif;
+    line-height: 1;
+    float: right;
+    /* right: 10%; */
 }
+
+.background { 
+    background:url("./backgroud.jpg");
+    width:100%;			
+    height:100%;	
+    position:fixed;
+    background-size:100% 100%;
+ } 
+
 .myAnimation {
     position: fixed;
     width: 60px;
@@ -304,56 +324,6 @@ body {
     -webkit-text-stroke: 1px #EEFFEE;
     -webkit-text-fill-color: transparent;
 }
-
-
-
-/* .five-pointed-star,
-.five-pointed-star::before,
-.five-pointed-star::after{
-    width: 0;
-    height: 0;
-    border-left: var(--bw) solid transparent;
-    border-right: var(--bw) solid transparent;
-    border-top: calc(var(--bw) * 0.726542) solid #D91649; 
-}
-
-.five-pointed-star{
-    --bw: 60px;
-    position: fixed;
-}
-.five-pointed-star::before{
-    content: '';
-    position: absolute;
-    transform: translate(-50%,-100%) rotate(70deg);
-}
-.five-pointed-star::after{
-    content: '';
-    position: absolute;
-    transform: translate(-50%,-100%) rotate(-70deg);
-} */
-
-/* .diamond{
-width: 50px;
-height: 0;
-border-style: solid;
-border-color: transparent transparent red transparent;
-border-width: 0 25px 25px 25px;
-position: fixed;
-margin: 20px 0 50px 0;
-}
-.diamond:after{
-width: 0;
-height: 0;
-top: 25px;
-left: -25px;
-border-style: solid;
-border-color: red transparent transparent transparent;
-border-width: 70px 50px 0 50px;
-position: absolute;
-content: "";
-} */
-
-
 .square{
     position: fixed;
     width: 80px;
@@ -365,11 +335,56 @@ content: "";
     -webkit-text-stroke: 1px #EEFFEE;
     -webkit-text-fill-color: transparent;
 }
-
 .explodeDiv-dot {
   background-color: #33D1A0;
   border-radius: 999px;
   position: absolute;
+}
+
+.btn {
+  width:200px; 
+  height:100px;
+  position: absolute;
+  top: 80%;
+  left:50%;
+  margin-left: -100px;
+  align-self: center;
+  background-color: #fff;
+  background-image: none;
+  background-position: 0 90%;
+  background-repeat: repeat no-repeat;
+  background-size: 4px 3px;
+  border-radius: 15px 225px 255px 15px 15px 255px 225px 15px;
+  border-style: solid;
+  border-width: 2px;
+  box-shadow: rgba(0, 0, 0, .2) 15px 28px 25px -18px;
+  box-sizing: border-box;
+  color: #41403e;
+  cursor: pointer;
+  display: inline-block;
+  font-family: Neucha, sans-serif;
+  font-size: 2rem;
+  line-height: 23px;
+  outline: none;
+  padding: .75rem;
+  text-decoration: none;
+  transition: all 235ms ease-in-out;
+  border-bottom-left-radius: 15px 255px;
+  border-bottom-right-radius: 225px 15px;
+  border-top-left-radius: 255px 15px;
+  border-top-right-radius: 15px 225px;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.btn:hover {
+  box-shadow: rgba(0, 0, 0, .3) 2px 8px 8px -5px;
+  transform: translate3d(0, 2px, 0);
+}
+
+.btn:focus {
+  box-shadow: rgba(0, 0, 0, .3) 2px 8px 4px -6px;
 }
 
 </style>

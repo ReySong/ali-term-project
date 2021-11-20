@@ -1,67 +1,96 @@
 <template>
-  <div id="root">
-    <ParabolicBall></ParabolicBall>
+  <div id="root" class="background">
+    <!-- <ParabolicBall></ParabolicBall> -->
+    <!-- <EndPage></EndPage> -->
+
+    
+
+    <router-view></router-view>
+
+
+  
+      <!-- <div class="container">
+      <span>Play Game</span><br/>
+      <button class="btn btn-parabola " @click="toParabolicBall">抛物游戏</button>
+      <button class="btn" >淡出坠落</button>
+      </div>
+   -->
   </div>
-  <!-- <canvas ref="canvas" class="canvas" width="1000" height="1000"></canvas> -->
-  <!-- <button class="btn btn-drop"> 坠落 </button>
-  <button class="btn btn-parabola"> 抛物 </button>
-  <button class="btn btn-fade"> 淡入 </button>
-  <button class="btn btn-start"> 开始游戏！ </button> -->
+  
 </template>
 
 <script>
-
 // import { FadeIn, FadeOut } from './scripts/fade';
 // import  GenerateRamdonLocElems from './scripts/generate';
-import ParabolicBall from './components/ParabolicBall.vue'
+// import ParabolicBall from './components/ParabolicBall'
+// import EndPage from './components/EndPage'
 // import { setup, Game } from './scripts/game';
-
 export default {
   name: 'App',
-  components: {ParabolicBall},
-  /* mounted() {
-    // const canvas = this.$refs.canvas;
-    // const ctx = canvas.getContext("2d");
-    // ctx.font = "20px Arial";
-    // ctx.textAlign = "center";
-    const root = document.getElementById("root");
-    let timer;
-    let elem;
-    let animation;
-    let idCount = 0;
-
-    let fadeBtn = document.getElementsByClassName("btn-fade")[0];
-    fadeBtn.addEventListener("click", () => {
-      elem = GenerateRamdonLocElems();
-      let id = FadeIn(root, elem, idCount++);
-      timer = setTimeout(() => {
-        cancelAnimationFrame(animation);
-        FadeOut(id);
-      }, 3000)
-      document.addEventListener('keyup', () => {
-        if (event.keyCode === elem.keycode) {
-          clearInterval(timer);
-          FadeOut(id);
-        }
-      })
-    })
-
+  data(){
+    return {
+      isShow: true
+    }
+  },
+  methods:{
+   
+    toParabolicBall(){
+      this.isShow = false
+      this.$router.push('/parbolicBall')
+      // this.isShow = true
+    },
     
-  }*/
+    
+  },
+  mounted(){
+
+  }
+  // components: {ParabolicBall},
 } 
 </script>
 
 <style>
-.canvas {
-  position: fixed;
-  top: 0;
-  right: 0;
-  left: 0;
-  bottom: 0;
-  z-index: 9;
+
+.background { 
+    background:url("./backgroud.jpg");
+    width:100%;			
+    height:100%;	
+    background-size:100% 100%;
+ } 
+.text {
+  color: #4d63bc;
+  font-size: 80px;
+}
+.container {
+    width: 300px;
+    height: 600px;
+    top: 50%;
+    left: 50%;
+    margin-left: -150px;
+    margin-top: -300px;
+    /* background-color: #D7D7D7; */
+    text-align: center;
+    font-size: 50px;
+    /* -webkit-text-stroke: 1px #373750;
+    -webkit-text-fill-color: transparent; */
+    box-shadow:
+    2.9px 5.4px 5.2px -34px rgba(0, 0, 0, 0.07),
+    7.9px 14.9px 14.3px -34px rgba(0, 0, 0, 0.1),
+    19px 35.9px 34.4px -34px rgba(0, 0, 0, 0.13),
+    63px 119px 114px -34px rgba(0, 0, 0, 0.2);
+
+    border:solid 5px #593207;
+    border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+    padding:10px
 }
 
 .btn {
+  width:180px; 
+  height:80px;
+  position: absolute;
+  top: 70%;
+  left:50%;
+  margin-left: -90px;
   align-self: center;
   background-color: #fff;
   background-image: none;
@@ -77,7 +106,7 @@ export default {
   cursor: pointer;
   display: inline-block;
   font-family: Neucha, sans-serif;
-  font-size: 1rem;
+  font-size: 1.5rem;
   line-height: 23px;
   outline: none;
   padding: .75rem;
@@ -101,6 +130,7 @@ export default {
   box-shadow: rgba(0, 0, 0, .3) 2px 8px 4px -6px;
 }
 
+
 .btn-start {
   position: fixed;
   left: 45%;
@@ -115,9 +145,7 @@ export default {
 }
 
 .btn-parabola {
-  position: fixed;
-  left: 46.5%;
-  bottom: 30%;
+  position: fixed
 }
 
 .btn-fade {
